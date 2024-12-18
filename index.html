@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi, Lovely Bee! 🐝</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+            color: #6a0572;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            animation: gradientBackground 10s infinite alternate;
+            background: linear-gradient(45deg, #fdf0ff, #ffebd9, #fff0f5);
+            background-size: 300% 300%;
+        }
+
+        @keyframes gradientBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 50% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        h1 {
+            margin-top: 50px;
+            font-size: 2.5rem;
+            color: #b75592;     
+            text-shadow: 2px 2px #e8b3d9;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #844f72;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .question-box {
+            background: #fff0f5;
+            border: 3px dotted #ffb3c6;
+            display: inline-block;
+            padding: 20px 40px;
+            margin: 20px;
+            border-radius: 15px;
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        .btn {
+            background-color: #ffb3c6;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease-in-out, background-color 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            background-color: #ff85a2;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #b75592;
+        }
+
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .quote-box {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            color: #6a0572;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hey Busy Bee! 🐝</h1>
+    <p>Have you been taking care of yourself? 🌟</p>
+
+    <div class="question-box">
+        <p>Promise you'll take a little break for yourself? 🧚‍♀️</p>
+        <button class="btn" id="yesBtn" onclick="handleYes()">Yes, I promise! 💖</button>
+        <button class="btn btn-no" id="noBtn" onclick="handleNo()">No, I can’t 🥺</button>
+    </div>
+    <div class="quote-box" id="quote"></div>
+    <footer>
+        Remember: You’re doing great, one tiny step at a time. 💕
+    </footer>
+    
+    <!-- Confetti Canvas -->
+    <canvas class="confetti" id="confetti"></canvas>
+    <audio id="confettiSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
+
+    <script>
+        let clickedYes = false; // Tracks if "Yes" has been clicked
+        const quotes = [
+            "You’re braver than you believe, and stronger than you seem.",
+            "Don't forget to smile today! 😄",
+            "Small steps lead to big journeys. Keep going! 🚶‍♀️",
+            "You're a star 🌟— shine bright!",
+            "Believe in yourself! You’ve got this! 💪"
+        ];
+
+        function handleYes() {
+            const quoteBox = document.getElementById('quote');
+            if (clickedYes) {
+                alert("Oh, good boy!");
+            } else {
+                alert('Yay! Keep shining 🌸✨');
+                clickedYes = true;
+                quoteBox.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+                startConfetti();
+                document.getElementById('confettiSound').play();
+            }
+        }
+
+        function handleNo() {
+            if (clickedYes) {
+                alert("Oh, you already told Yes! Now there’s no going back TAKE A BREAK.");
+                stopConfetti(); // Stop the confetti if "No" is clicked after "Yes"
+            } else {
+                alert("Take a break and put me a text MODAYA!");
+            }
+        }
+
+        // Confetti Script
+        const confettiCanvas = document.getElementById('confetti');
+        const ctx = confettiCanvas.getContext('2d');
+        const confettiPieces = Array.from({ length: 150 }, () => ({
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            r: Math.random() * 5 + 1,
+            dx: Math.random() * 3 - 1.5,
+            dy: Math.random() * 3 + 2,
+            color: `hsl(${Math.random() * 360}, 100%, 70%)`
+        }));
+
+        function resizeCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+  
+        function drawConfetti() {
+            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            confettiPieces.forEach(piece => {
+                ctx.beginPath();
+                ctx.arc(piece.x, piece.y, piece.r, 0, 2 * Math.PI);
+                ctx.fillStyle = piece.color;
+                ctx.fill();
+                piece.x += piece.dx;
+                piece.y += piece.dy;
+                if (piece.y > confettiCanvas.height) piece.y = -10;
+                if (piece.x > confettiCanvas.width || piece.x < 0) piece.dx *= -1;
+            });
+        }
+
+        let confettiInterval;
+        function startConfetti() {
+            if (!confettiInterval) {
+                confettiInterval = setInterval(drawConfetti, 30);
+            }
+        }
+        function stopConfetti() {
+            clearInterval(confettiInterval);
+            confettiInterval = null;
+        }
+    </script>
+</body>
+</html>
